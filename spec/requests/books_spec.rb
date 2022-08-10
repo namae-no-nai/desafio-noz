@@ -14,9 +14,9 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe '/authors', type: :request do
+RSpec.describe '/books', type: :request do
   # This should return the minimal set of attributes required to create a valid
-  # Author. As you add validations to Author, be sure to
+  # Book. As you add validations to Book, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
     skip('Add a hash of attributes valid for your model')
@@ -32,48 +32,48 @@ RSpec.describe '/authors', type: :request do
 
   describe 'GET /index' do
     it 'renders a successful response' do
-      Author.create! valid_attributes
-      get api_authors_url, headers: valid_headers, as: :json
+      Book.create! valid_attributes
+      get api_books_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
 
   describe 'GET /show' do
     it 'renders a successful response' do
-      author = Author.create! valid_attributes
-      get api_author_url(author), as: :json
+      book = Book.create! valid_attributes
+      get api_book_url(book), as: :json
       expect(response).to be_successful
     end
   end
 
   describe 'POST /create' do
     context 'with valid parameters' do
-      it 'creates a new Author' do
+      it 'creates a new Book' do
         expect do
-          post api_authors_url,
-               params: { author: valid_attributes }, headers: valid_headers, as: :json
-        end.to change(Author, :count).by(1)
+          post api_books_url,
+               params: { book: valid_attributes }, headers: valid_headers, as: :json
+        end.to change(Book, :count).by(1)
       end
 
-      it 'renders a JSON response with the new author' do
-        post api_authors_url,
-             params: { author: valid_attributes }, headers: valid_headers, as: :json
+      it 'renders a JSON response with the new book' do
+        post api_books_url,
+             params: { book: valid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
     end
 
     context 'with invalid parameters' do
-      it 'does not create a new Author' do
+      it 'does not create a new Book' do
         expect do
-          post api_authors_url,
-               params: { author: invalid_attributes }, as: :json
-        end.to change(Author, :count).by(0)
+          post api_books_url,
+               params: { book: invalid_attributes }, as: :json
+        end.to change(Book, :count).by(0)
       end
 
-      it 'renders a JSON response with errors for the new author' do
-        post api_authors_url,
-             params: { author: invalid_attributes }, headers: valid_headers, as: :json
+      it 'renders a JSON response with errors for the new book' do
+        post api_books_url,
+             params: { book: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -86,28 +86,28 @@ RSpec.describe '/authors', type: :request do
         skip('Add a hash of attributes valid for your model')
       end
 
-      it 'updates the requested author' do
-        author = Author.create! valid_attributes
-        patch api_author_url(author),
-              params: { author: new_attributes }, headers: valid_headers, as: :json
-        author.reload
+      it 'updates the requested book' do
+        book = Book.create! valid_attributes
+        patch api_book_url(book),
+              params: { book: new_attributes }, headers: valid_headers, as: :json
+        book.reload
         skip('Add assertions for updated state')
       end
 
-      it 'renders a JSON response with the author' do
-        author = Author.create! valid_attributes
-        patch api_author_url(author),
-              params: { author: new_attributes }, headers: valid_headers, as: :json
+      it 'renders a JSON response with the book' do
+        book = Book.create! valid_attributes
+        patch api_book_url(book),
+              params: { book: new_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
     end
 
     context 'with invalid parameters' do
-      it 'renders a JSON response with errors for the author' do
-        author = Author.create! valid_attributes
-        patch api_author_url(author),
-              params: { author: invalid_attributes }, headers: valid_headers, as: :json
+      it 'renders a JSON response with errors for the book' do
+        book = Book.create! valid_attributes
+        patch api_book_url(book),
+              params: { book: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -115,11 +115,11 @@ RSpec.describe '/authors', type: :request do
   end
 
   describe 'DELETE /destroy' do
-    it 'destroys the requested author' do
-      author = Author.create! valid_attributes
+    it 'destroys the requested book' do
+      book = Book.create! valid_attributes
       expect do
-        delete api_author_url(author), headers: valid_headers, as: :json
-      end.to change(Author, :count).by(-1)
+        delete api_book_url(book), headers: valid_headers, as: :json
+      end.to change(Book, :count).by(-1)
     end
   end
 end

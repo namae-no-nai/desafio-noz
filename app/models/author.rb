@@ -3,4 +3,6 @@
 class Author < ApplicationRecord
   validates :name, :main_genre, :age, presence: true
   validates :age, numericality: { only_integer: true }
+
+  has_many :books
 end

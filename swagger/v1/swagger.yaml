@@ -85,6 +85,98 @@ paths:
       responses:
         '204':
           description: successful
+  "/api/books":
+    get:
+      summary: list books
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create book
+      parameters: []
+      responses:
+        '201':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                author_id:
+                  type: integer
+                genre:
+                  type: string
+                published_at:
+                  type: integer
+                publisher:
+                  type: string
+              required:
+              - title
+              - description
+              - author_id
+              - genre
+              - published_at
+              - publisher
+  "/api/books/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show book
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update book
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                author_id:
+                  type: integer
+                genre:
+                  type: string
+                published_at:
+                  type: integer
+                publisher:
+                  type: string
+              required:
+              - title
+              - description
+              - author_id
+              - genre
+              - published_at
+              - publisher
+    delete:
+      summary: delete book
+      responses:
+        '204':
+          description: successful
 servers:
 - url: https://{defaultHost}
   variables:
