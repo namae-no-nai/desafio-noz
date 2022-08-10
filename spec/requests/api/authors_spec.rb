@@ -1,12 +1,11 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'api/authors', type: :request do
-
   path '/api/authors' do
-
     get('list authors') do
       response(200, 'successful') do
-
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -27,10 +26,9 @@ RSpec.describe 'api/authors', type: :request do
           main_genre: { type: :string },
           age: { type: :integer }
         },
-        required: [ 'name', 'main_genre', 'age' ]
+        required: %w[name main_genre age]
       }
       response(201, 'successful') do
-
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -50,9 +48,8 @@ RSpec.describe 'api/authors', type: :request do
 
     get('show author') do
       response(200, 'successful') do
-        
-        before do 
-          create(:author, id: '123') 
+        before do
+          create(:author, id: '123')
         end
 
         let(:id) { '123' }
@@ -79,11 +76,11 @@ RSpec.describe 'api/authors', type: :request do
             main_genre: { type: :string },
             age: { type: :integer }
           },
-          required: [ 'name', 'main_genre', 'age' ]
+          required: %w[name main_genre age]
         }
 
-        before do 
-          create(:author, id: '123') 
+        before do
+          create(:author, id: '123')
         end
 
         let(:id) { '123' }
@@ -103,11 +100,11 @@ RSpec.describe 'api/authors', type: :request do
     delete('delete author') do
       response(204, 'successful') do
         parameter name: 'id', in: :path, type: :string, description: 'id'
-        
-        before do 
-          create(:author, id: '123') 
+
+        before do
+          create(:author, id: '123')
         end
-        
+
         let(:id) { '123' }
 
         run_test!
