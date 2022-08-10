@@ -1,0 +1,92 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/authors":
+    get:
+      summary: list authors
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create author
+      parameters: []
+      responses:
+        '201':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                main_genre:
+                  type: string
+                age:
+                  type: integer
+              required:
+              - name
+              - main_genre
+              - age
+  "/api/authors/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show author
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update author
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                main_genre:
+                  type: string
+                age:
+                  type: integer
+              required:
+              - name
+              - main_genre
+              - age
+    delete:
+      summary: delete author
+      parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: successful
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com
