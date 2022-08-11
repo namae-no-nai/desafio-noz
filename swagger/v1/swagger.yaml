@@ -290,9 +290,10 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
-securityDefinitions:
-    Bearer:
-      description: "..."
-      type: apiKey
-      name: Authorization
-      in: header
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
