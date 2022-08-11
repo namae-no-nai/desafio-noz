@@ -6,5 +6,7 @@ class Author < ApplicationRecord
   validates :name, :main_genre, :age, presence: true
   validates :age, numericality: { only_integer: true }
 
+  belongs_to :user
+
   has_many :books, dependent: :destroy
 end

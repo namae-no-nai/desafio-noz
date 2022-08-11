@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 if Author.count.zero?
+  user = User.create(username: 'dummy', password: '123')
+
   10.times do
     author = Author.create(
       name: Faker::Book.author,
       age: rand(20..99),
-      main_genre: Faker::Book.genre
+      main_genre: Faker::Book.genre,
+      user_id: user.id
     )
 
     3.times do

@@ -2,6 +2,7 @@
 
 module Api
   class AuthorsController < ApplicationController
+    before_action :authorize
     before_action :set_author, only: %i[show update destroy]
 
     def index
@@ -49,7 +50,7 @@ module Api
     end
 
     def author_params
-      params.require(:author).permit(:name, :main_genre, :age)
+      params.require(:author).permit(:name, :main_genre, :age).merge({ user_id: @user.id })
     end
 
     def filter_params

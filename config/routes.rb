@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
 
   namespace :api do
+    post '/login', to: 'users#login'
+    resources :users, only: %i[create]
     resources :books
     resources :authors
   end
