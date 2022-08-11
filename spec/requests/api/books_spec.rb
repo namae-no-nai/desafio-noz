@@ -3,9 +3,14 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/books', type: :request do
+  let(:user) { create(:user) }
+  let(:'Authorization') { "Bearer #{JWT.encode({ user_id: user.id }, 'secret')}" }
+
   path '/api/books' do
     get('list books') do
       response(200, 'successful') do
+        security [Bearer: {}]
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -20,6 +25,7 @@ RSpec.describe 'api/books', type: :request do
     post('create book') do
       response(201, 'successful') do
         consumes 'application/json'
+        security [Bearer: {}]
         parameter name: :book, in: :body, schema: {
           type: :object,
           properties: {
@@ -40,6 +46,8 @@ RSpec.describe 'api/books', type: :request do
             }
           }
         end
+
+        let(:user) { author.user }
         let(:author) { create(:author) }
         let(:book) do
           {
@@ -62,6 +70,8 @@ RSpec.describe 'api/books', type: :request do
 
     get('show book') do
       response(200, 'successful') do
+        security [Bearer: {}]
+
         before do
           create(:book, id: '123')
         end
@@ -82,6 +92,7 @@ RSpec.describe 'api/books', type: :request do
     put('update book') do
       response(200, 'successful') do
         consumes 'application/json'
+        security [Bearer: {}]
         parameter name: 'id', in: :path, type: :string, description: 'id'
         parameter name: :book, in: :body, schema: {
           type: :object,
@@ -109,6 +120,8 @@ RSpec.describe 'api/books', type: :request do
             }
           }
         end
+
+        let(:user) { author.user }
         let(:author) { create(:author) }
         let(:book) do
           {
@@ -126,6 +139,8 @@ RSpec.describe 'api/books', type: :request do
 
     delete('delete book') do
       response(204, 'successful') do
+        security [Bearer: {}]
+
         before do
           create(:book, id: '123')
         end

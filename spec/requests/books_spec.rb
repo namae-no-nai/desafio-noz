@@ -16,9 +16,10 @@ require 'rails_helper'
 
 RSpec.describe '/books', type: :request do
 
-  let(:author) { create(:author) }
+  let(:author) { create(:author, user_id: user.id) }
+
   let(:valid_attributes) do
-    attributes_for(:book, author_id:author.id)
+    attributes_for(:book, author_id: author.id)
   end
 
   let(:invalid_attributes) do
@@ -31,8 +32,12 @@ RSpec.describe '/books', type: :request do
                            )
   end
 
+  let(:user) { create(:user) }
+
   let(:valid_headers) do
-    {}
+    {
+      "Authorization": "Bearer #{JWT.encode({ user_id: user.id }, 'secret')}"
+    }
   end
 
   describe 'GET /index' do
@@ -46,7 +51,7 @@ RSpec.describe '/books', type: :request do
   describe 'GET /show' do
     it 'renders a successful response' do
       book = Book.create! valid_attributes
-      get api_book_url(book), as: :json
+      get api_book_url(book), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
@@ -72,7 +77,7 @@ RSpec.describe '/books', type: :request do
       it 'does not create a new Book' do
         expect do
           post api_books_url,
-               params: { book: invalid_attributes }, as: :json
+               params: { book: invalid_attributes }, headers: valid_headers, as: :json
         end.to change(Book, :count).by(0)
       end
 

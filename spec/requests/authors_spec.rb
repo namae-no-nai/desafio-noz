@@ -19,15 +19,19 @@ RSpec.describe '/authors', type: :request do
   # Author. As you add validations to Author, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
-    attributes_for(:author)
+    attributes_for(:author, user_id: user.id)
   end
 
   let(:invalid_attributes) do
     attributes_for(:author, name: nil, age: 'vinte', main_genre: nil)
   end
 
+  let(:user) { create(:user) }
+
   let(:valid_headers) do
-    {}
+    {
+      "Authorization": "Bearer #{JWT.encode({ user_id:user.id }, 'secret')}"
+    }
   end
 
   describe 'GET /index' do
@@ -41,13 +45,14 @@ RSpec.describe '/authors', type: :request do
   describe 'GET /show' do
     context 'invalid id' do
       it 'renders a 404 error' do
-        get api_author_url(1), as: :json
+        get api_author_url(1), headers: valid_headers, as: :json
         expect(response.code).to eq('404')
       end 
     end
+
     it 'renders a successful response' do
       author = Author.create! valid_attributes
-      get api_author_url(author), as: :json
+      get api_author_url(author), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end

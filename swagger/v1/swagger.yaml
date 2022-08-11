@@ -178,7 +178,7 @@ paths:
         '204':
           description: successful
 servers:
-- url: http://{defaultHost}
+- url: https://{defaultHost}
   variables:
     defaultHost:
-      default: localhost:3000
+      default: www.example.com

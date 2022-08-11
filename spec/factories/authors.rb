@@ -5,5 +5,6 @@ FactoryBot.define do
     name { 'Shakespeare' }
     main_genre { 'Romance' }
     age { 34 }
+    association(:user)
   end
 end

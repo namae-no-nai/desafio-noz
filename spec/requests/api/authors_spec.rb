@@ -3,9 +3,14 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/authors', type: :request do
+  let(:user) { create(:user) }
+  let(:'Authorization') { "Bearer #{JWT.encode({ user_id: user.id }, 'secret')}" }
+
   path '/api/authors' do
     get('list authors') do
       response(200, 'successful') do
+        security [Bearer: {}]
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -28,7 +33,10 @@ RSpec.describe 'api/authors', type: :request do
         },
         required: %w[name main_genre age]
       }
+
       response(201, 'successful') do
+        security [Bearer: {}]
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -36,6 +44,7 @@ RSpec.describe 'api/authors', type: :request do
             }
           }
         end
+
         let(:author) { { name: 'Shakespere', main_genre: 'Romance', age: 34 } }
         run_test!
       end
@@ -48,11 +57,11 @@ RSpec.describe 'api/authors', type: :request do
 
     get('show author') do
       response(200, 'successful') do
-        before do
-          create(:author, id: '123')
-        end
+        security [Bearer: {}]
 
-        let(:id) { '123' }
+        let(:author) { create(:author) }
+        let(:user) { author.user }
+        let(:id) { author.id }
 
         after do |example|
           example.metadata[:response][:content] = {
@@ -68,6 +77,8 @@ RSpec.describe 'api/authors', type: :request do
     put('update author') do
       response(200, 'successful') do
         consumes 'application/json'
+        security [Bearer: {}]
+        
         parameter name: 'id', in: :path, type: :string, description: 'id'
         parameter name: :author, in: :body, schema: {
           type: :object,
@@ -79,12 +90,6 @@ RSpec.describe 'api/authors', type: :request do
           required: %w[name main_genre age]
         }
 
-        before do
-          create(:author, id: '123')
-        end
-
-        let(:id) { '123' }
-
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -92,6 +97,13 @@ RSpec.describe 'api/authors', type: :request do
             }
           }
         end
+
+        before do
+          create(:author, id: 123, user: user)
+        end
+
+        let(:id) { 123 }
+
         let(:author) { { name: 'Shakespere', main_genre: 'Romance', age: 34 } }
         run_test!
       end
@@ -100,12 +112,11 @@ RSpec.describe 'api/authors', type: :request do
     delete('delete author') do
       response(204, 'successful') do
         parameter name: 'id', in: :path, type: :string, description: 'id'
+        security [Bearer: {}]
 
-        before do
-          create(:author, id: '123')
-        end
-
-        let(:id) { '123' }
+        let(:author) { create(:author) }
+        let(:user) { author.user }
+        let(:id) { author.id }
 
         run_test!
       end
