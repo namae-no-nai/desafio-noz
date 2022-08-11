@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if Author.count.zero?
   10.times do
     author = Author.create(
