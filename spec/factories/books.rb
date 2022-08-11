@@ -2,11 +2,11 @@
 
 FactoryBot.define do
   factory :book do
-    title { 'Romeo and Juliet' }
-    description { 'A tragic romance' }
-    genre { 'Romance' }
+    title { Faker::Book.title }
+    description { Faker::Lorem.sentence(word_count: 10) }
+    genre { Faker::Book.genre }
     association(:author)
-    published_at { Date.today }
-    publisher { 'Britanica' }
+    published_at { Date.today - rand(1000..3000).days }
+    publisher { Faker::Book.publisher }
   end
 end

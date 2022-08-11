@@ -50,7 +50,7 @@ module Api
     end
 
     def author_params
-      params.require(:author).permit(:name, :main_genre, :age).merge({ user_id: @user.id })
+      params.permit(:name, :main_genre, :age).merge({ user_id: @user.id })
     end
 
     def filter_params

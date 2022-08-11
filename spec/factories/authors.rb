@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :author do
-    name { 'Shakespeare' }
-    main_genre { 'Romance' }
-    age { 34 }
+    name { Faker::Book.author }
+    main_genre { Faker::Book.genre }
+    age { rand(20..99) }
     association(:user)
   end
 end

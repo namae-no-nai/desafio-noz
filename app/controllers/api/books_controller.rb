@@ -46,7 +46,7 @@ module Api
     end
 
     def book_params
-      params.require(:book).permit(:title, :description, :genre, :author_id, :published_at, :publisher)
+      params.permit(:title, :description, :genre, :author_id, :published_at, :publisher)
     end
 
     def filter_params
