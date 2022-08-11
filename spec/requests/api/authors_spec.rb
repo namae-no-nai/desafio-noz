@@ -10,6 +10,9 @@ RSpec.describe 'api/authors', type: :request do
     get('list authors') do
       response(200, 'successful') do
         security [Bearer: {}]
+        parameter name: :name, in: :query, type: :string, required: false
+        parameter name: :main_genre, in: :query, type: :string, required: false
+        parameter name: :age, in: :query, type: :integer, required: false
 
         after do |example|
           example.metadata[:response][:content] = {

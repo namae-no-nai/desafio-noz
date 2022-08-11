@@ -46,6 +46,19 @@ RSpec.describe '/books', type: :request do
       get api_books_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
+
+    context 'when it has query params' do
+      let!(:book) { create(:book, title: 'Romeo and Juliet') }
+
+      before { create_list(:book, 3) }
+
+      it 'renders filtered results' do
+        get api_books_url(title: book.title), headers: valid_headers, as: :json
+        response_body = JSON.parse(response.body)
+        books_ids = response_body['books'].map { |book| book['id'] }
+        expect(books_ids).to eq([book.id])
+      end
+    end
   end
 
   describe 'GET /show' do
@@ -61,13 +74,13 @@ RSpec.describe '/books', type: :request do
       it 'creates a new Book' do
         expect do
           post api_books_url,
-               params: { book: valid_attributes }, headers: valid_headers, as: :json
+               params: valid_attributes, headers: valid_headers, as: :json
         end.to change(Book, :count).by(1)
       end
 
       it 'renders a JSON response with the new book' do
         post api_books_url,
-             params: { book: valid_attributes }, headers: valid_headers, as: :json
+             params: valid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
@@ -77,13 +90,13 @@ RSpec.describe '/books', type: :request do
       it 'does not create a new Book' do
         expect do
           post api_books_url,
-               params: { book: invalid_attributes }, headers: valid_headers, as: :json
+               params: invalid_attributes, headers: valid_headers, as: :json
         end.to change(Book, :count).by(0)
       end
 
       it 'renders a JSON response with errors for the new book' do
         post api_books_url,
-             params: { book: invalid_attributes }, headers: valid_headers, as: :json
+             params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to include('application/json')
       end
@@ -99,7 +112,7 @@ RSpec.describe '/books', type: :request do
       it 'updates the requested book' do
         book = Book.create! valid_attributes
         patch api_book_url(book),
-              params: { book: new_attributes }, headers: valid_headers, as: :json
+              params: new_attributes, headers: valid_headers, as: :json
         book.reload
         expect(book.title).to eq(new_attributes[:title])
       end
@@ -107,7 +120,7 @@ RSpec.describe '/books', type: :request do
       it 'renders a JSON response with the book' do
         book = Book.create! valid_attributes
         patch api_book_url(book),
-              params: { book: new_attributes }, headers: valid_headers, as: :json
+              params: new_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
@@ -117,7 +130,7 @@ RSpec.describe '/books', type: :request do
       it 'renders a JSON response with errors for the book' do
         book = Book.create! valid_attributes
         patch api_book_url(book),
-              params: { book: invalid_attributes }, headers: valid_headers, as: :json
+              params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to include('application/json')
       end

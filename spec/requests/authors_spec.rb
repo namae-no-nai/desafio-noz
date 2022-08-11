@@ -40,6 +40,19 @@ RSpec.describe '/authors', type: :request do
       get api_authors_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
+
+    context 'when it has query params' do
+      let!(:author) { create(:author, name: 'Machiavel') }
+
+      before { create_list(:author, 3) }
+
+      it 'renders filtered results' do
+        get api_authors_url(name: author.name), headers: valid_headers, as: :json
+        response_body = JSON.parse(response.body)
+        authors_ids = response_body['authors'].map { |author| author['id'] }
+        expect(authors_ids).to eq([author.id])
+      end
+    end
   end
 
   describe 'GET /show' do
@@ -62,13 +75,13 @@ RSpec.describe '/authors', type: :request do
       it 'creates a new Author' do
         expect do
           post api_authors_url,
-               params: { author: valid_attributes }, headers: valid_headers, as: :json
+               params: valid_attributes, headers: valid_headers, as: :json
         end.to change(Author, :count).by(1)
       end
 
       it 'renders a JSON response with the new author' do
         post api_authors_url,
-             params: { author: valid_attributes }, headers: valid_headers, as: :json
+             params: valid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
@@ -78,13 +91,13 @@ RSpec.describe '/authors', type: :request do
       it 'does not create a new Author' do
         expect do
           post api_authors_url,
-               params: { author: invalid_attributes }, as: :json
+               params: invalid_attributes, as: :json
         end.to change(Author, :count).by(0)
       end
 
       it 'renders a JSON response with errors for the new author' do
         post api_authors_url,
-             params: { author: invalid_attributes }, headers: valid_headers, as: :json
+             params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to include('application/json')
       end
@@ -100,7 +113,7 @@ RSpec.describe '/authors', type: :request do
       it 'updates the requested author' do
         author = Author.create! valid_attributes
         patch api_author_url(author),
-              params: { author: new_attributes }, headers: valid_headers, as: :json
+              params: new_attributes, headers: valid_headers, as: :json
         author.reload
         expect(author.name).to eq(new_attributes[:name])
       end
@@ -108,7 +121,7 @@ RSpec.describe '/authors', type: :request do
       it 'renders a JSON response with the author' do
         author = Author.create! valid_attributes
         patch api_author_url(author),
-              params: { author: new_attributes }, headers: valid_headers, as: :json
+              params: new_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
@@ -118,7 +131,7 @@ RSpec.describe '/authors', type: :request do
       it 'renders a JSON response with errors for the author' do
         author = Author.create! valid_attributes
         patch api_author_url(author),
-              params: { author: invalid_attributes }, headers: valid_headers, as: :json
+              params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to include('application/json')
       end

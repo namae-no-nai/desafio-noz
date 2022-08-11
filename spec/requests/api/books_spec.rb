@@ -10,6 +10,11 @@ RSpec.describe 'api/books', type: :request do
     get('list books') do
       response(200, 'successful') do
         security [Bearer: {}]
+        parameter name: :title, in: :query, type: :string, required: false
+        parameter name: :genre, in: :query, type: :string, required: false
+        parameter name: :description, in: :query, type: :string, required: false
+        parameter name: :published_at, in: :query, type: :string, required: false
+        parameter name: :publisher, in: :query, type: :string, required: false
 
         after do |example|
           example.metadata[:response][:content] = {
