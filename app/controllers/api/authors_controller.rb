@@ -6,8 +6,12 @@ module Api
 
     def index
       @authors = Author.all
+      @authors = ::QueryFilter.call(@authors, filter_params) if filter_params.present?
 
-      render json: @authors
+      @pagy, @authors = pagy(@authors, items: 5)
+      @authors = @authors.map { |author| author.serializable_hash(include: :books) }
+
+      render json: { count: @pagy.count, page: @pagy.page, pages: @pagy.pages, authors: @authors }
     end
 
     def show
@@ -44,6 +48,10 @@ module Api
 
     def author_params
       params.require(:author).permit(:name, :main_genre, :age)
+    end
+
+    def filter_params
+      params.permit(:name, :main_genre, :age)
     end
   end
 end

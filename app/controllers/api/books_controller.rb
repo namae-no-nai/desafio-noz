@@ -6,8 +6,10 @@ module Api
 
     def index
       @books = Book.all
+      @books = ::QueryFilter.call(@books, filter_params) if filter_params.present?
 
-      render json: @books
+      @pagy, @books = pagy(@books, items: 5)
+      render json: { count: @pagy.count, page: @pagy.page, pages: @pagy.pages, books: @books }
     end
 
     def show
@@ -44,6 +46,10 @@ module Api
 
     def book_params
       params.require(:book).permit(:title, :description, :genre, :author_id, :published_at, :publisher)
+    end
+
+    def filter_params
+      params.permit(:title, :description, :genre, :published_at)
     end
   end
 end
