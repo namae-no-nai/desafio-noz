@@ -44,6 +44,8 @@ module Api
 
     def set_author
       @author = Author.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: nil, status: :not_found
     end
 
     def author_params

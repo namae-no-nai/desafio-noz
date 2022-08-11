@@ -15,15 +15,20 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe '/books', type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Book. As you add validations to Book, be sure to
-  # adjust the attributes here as well.
+
+  let(:author) { create(:author) }
   let(:valid_attributes) do
-    skip('Add a hash of attributes valid for your model')
+    attributes_for(:book, author_id:author.id)
   end
 
   let(:invalid_attributes) do
-    skip('Add a hash of attributes invalid for your model')
+    attributes_for(:book, title: nil, 
+                           description: nil, 
+                           genre: nil, 
+                           author_id: nil,
+                           published_at: nil,
+                           publisher: nil
+                           )
   end
 
   let(:valid_headers) do
@@ -75,7 +80,7 @@ RSpec.describe '/books', type: :request do
         post api_books_url,
              params: { book: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
@@ -83,7 +88,7 @@ RSpec.describe '/books', type: :request do
   describe 'PATCH /update' do
     context 'with valid parameters' do
       let(:new_attributes) do
-        skip('Add a hash of attributes valid for your model')
+        attributes_for(:book, title: Faker::Book.title)
       end
 
       it 'updates the requested book' do
@@ -91,7 +96,7 @@ RSpec.describe '/books', type: :request do
         patch api_book_url(book),
               params: { book: new_attributes }, headers: valid_headers, as: :json
         book.reload
-        skip('Add assertions for updated state')
+        expect(book.title).to eq(new_attributes[:title])
       end
 
       it 'renders a JSON response with the book' do
@@ -109,7 +114,7 @@ RSpec.describe '/books', type: :request do
         patch api_book_url(book),
               params: { book: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end

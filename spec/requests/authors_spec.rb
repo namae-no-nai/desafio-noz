@@ -19,11 +19,11 @@ RSpec.describe '/authors', type: :request do
   # Author. As you add validations to Author, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
-    skip('Add a hash of attributes valid for your model')
+    attributes_for(:author)
   end
 
   let(:invalid_attributes) do
-    skip('Add a hash of attributes invalid for your model')
+    attributes_for(:author, name: nil, age: 'vinte', main_genre: nil)
   end
 
   let(:valid_headers) do
@@ -39,6 +39,12 @@ RSpec.describe '/authors', type: :request do
   end
 
   describe 'GET /show' do
+    context 'invalid id' do
+      it 'renders a 404 error' do
+        get api_author_url(1), as: :json
+        expect(response.code).to eq('404')
+      end 
+    end
     it 'renders a successful response' do
       author = Author.create! valid_attributes
       get api_author_url(author), as: :json
@@ -75,7 +81,7 @@ RSpec.describe '/authors', type: :request do
         post api_authors_url,
              params: { author: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
@@ -83,7 +89,7 @@ RSpec.describe '/authors', type: :request do
   describe 'PATCH /update' do
     context 'with valid parameters' do
       let(:new_attributes) do
-        skip('Add a hash of attributes valid for your model')
+        attributes_for(:author, name: Faker::Book.author)
       end
 
       it 'updates the requested author' do
@@ -91,7 +97,7 @@ RSpec.describe '/authors', type: :request do
         patch api_author_url(author),
               params: { author: new_attributes }, headers: valid_headers, as: :json
         author.reload
-        skip('Add assertions for updated state')
+        expect(author.name).to eq(new_attributes[:name])
       end
 
       it 'renders a JSON response with the author' do
@@ -109,7 +115,7 @@ RSpec.describe '/authors', type: :request do
         patch api_author_url(author),
               params: { author: invalid_attributes }, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
